@@ -155,6 +155,7 @@ POST /api/game/shoot
 bun create vite client --template react
 cd client
 bun install
+bun add bootstrap
 bun run dev
 ```
 
