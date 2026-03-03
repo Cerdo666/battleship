@@ -27,8 +27,8 @@ battleship/
 ### 1. Crear el proyecto Laravel
 
 ```bash
-composer create-project laravel/laravel server
 cd server
+composer install
 ```
 
 ### 2. Copiar los archivos del back
@@ -51,7 +51,7 @@ Copia `.env.example` a `.env` y ajusta:
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=battleship_db
+DB_DATABASE=battleship
 DB_USERNAME=root
 DB_PASSWORD=
 ```
@@ -152,7 +152,6 @@ POST /api/game/shoot
 ## FRONT - Instalación
 
 ```bash
-bun create vite client --template react
 cd client
 bun install
 bun add bootstrap
