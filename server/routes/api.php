@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DocsController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\RankingController;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +19,9 @@ use Illuminate\Support\Facades\Route;
 // ==========================================================
 // RUTAS PÚBLICAS
 // ==========================================================
+
+// Documentation
+Route::get('/docs', [DocsController::class, 'index']);
 
 // Health check rápido
 Route::get('/status', function () {
