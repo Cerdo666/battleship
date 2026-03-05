@@ -2,9 +2,11 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { register } from '../services/api';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function Register() {
   const navigate = useNavigate();
+  const { colors } = useTheme();
   const [form, setForm] = useState({
     nickname: '',
     password: '',
@@ -42,7 +44,7 @@ export default function Register() {
   return (
     <div className="row justify-content-center">
       <div className="col-md-5">
-        <div className="card shadow-sm">
+        <div className="card shadow-sm" style={{ backgroundColor: colors.card, color: colors.text, borderColor: colors.border }}>
           <div className="card-body p-4">
             <h3 className="card-title mb-4 text-center">Crear cuenta</h3>
 
@@ -59,6 +61,7 @@ export default function Register() {
                   name="nickname"
                   value={form.nickname}
                   onChange={handleChange}
+                  style={{ backgroundColor: colors.bg, color: colors.text, borderColor: colors.border }}
                   required
                   autoFocus
                 />
@@ -73,6 +76,7 @@ export default function Register() {
                   name="password"
                   value={form.password}
                   onChange={handleChange}
+                  style={{ backgroundColor: colors.bg, color: colors.text, borderColor: colors.border }}
                   required
                   minLength={6}
                 />
@@ -86,13 +90,15 @@ export default function Register() {
                   name="password_confirmation"
                   value={form.password_confirmation}
                   onChange={handleChange}
+                  style={{ backgroundColor: colors.bg, color: colors.text, borderColor: colors.border }}
                   required
                 />
               </div>
 
               <button
                 type="submit"
-                className="btn btn-primary w-100"
+                className="btn w-100"
+                style={{ backgroundColor: colors.primary, color: '#fff', border: 'none' }}
                 disabled={loading}
               >
                 {loading ? 'Registrando...' : 'Crear cuenta'}
@@ -100,7 +106,7 @@ export default function Register() {
             </form>
 
             <p className="text-center mt-3 mb-0">
-              ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
+              ¿Ya tienes cuenta? <Link to="/login" style={{ color: colors.primary }}>Inicia sesión</Link>
             </p>
           </div>
         </div>

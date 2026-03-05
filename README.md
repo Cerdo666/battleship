@@ -73,7 +73,7 @@ php artisan migrate
 php artisan serve
 ```
 
-La API estará disponible en: `http://127.0.0.1:8000/api`
+La API estará disponible en: `http://127.0.0.1:8000/api/docs`
 
 ---
 
@@ -143,7 +143,7 @@ POST /api/game/shoot
   - Submarine: 3 celdas
   - Destroyer: 2 celdas
 - El jugador gana encontrando los 5 barcos
-- **Sistema de puntos:** `100- disparos`
+- **Sistema de puntos:** `100- golpes`
 - Solo usuarios con puntos > 0 aparecen en el ranking
 - No se puede cerrar sesión con una partida activa
 

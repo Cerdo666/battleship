@@ -60,8 +60,11 @@ export const getRanking = () =>
   request('/ranking');
 
 // ── GAME ──────────────────────────────────────────────
-export const startGame = () =>
-  request('/game/start', { method: 'POST' });
+export const startGame = (difficulty = 'classic') =>
+  request('/game/start', {
+    method: 'POST',
+    body: JSON.stringify({ difficulty }),
+  });
 
 export const shoot = (row, col) =>
   request('/game/shoot', {

@@ -10,9 +10,14 @@ class GameController extends Controller
     // -------------------------------------------------------
     // POST /api/game/start
     // Inicia una nueva partida: genera el tablero aleatoriamente
+    // Acepta difficulty: 'easy' (100 shots), 'classic' (60 shots), 'tactical' (30 shots)
     // -------------------------------------------------------
     public function start(Request $request)
     {
+        $request->validate([
+            'difficulty' => 'nullable|in:easy,classic,tactical',
+        ]);
+
         $user = $request->user();
 
         // Si ya tiene una partida activa, no puede iniciar otra
@@ -24,6 +29,14 @@ class GameController extends Controller
             ], 409);
         }
 
+        // Determine difficulty and max_shots
+        $difficulty = $request->input('difficulty', 'classic');
+        $maxShots = match($difficulty) {
+            'easy' => 100,
+            'tactical' => 30,
+            default => 60, // classic
+        };
+
         // Generar barcos aleatoriamente en el tablero 10x10
         $ships = $this->generateShips();
 
@@ -33,14 +46,17 @@ class GameController extends Controller
             'shots'   => [],
             'hits'    => [],
             'status'  => 'active',
+            'difficulty' => $difficulty,
             'total_shots' => 0,
+            'max_shots' => $maxShots,
             'points'  => 0,
         ]);
 
         return response()->json([
             'message' => 'Partida iniciada',
             'game_id' => $game->id,
-            // Al frontend NO le mandamos la posición de los barcos (sería trampa xd)
+            'difficulty' => $difficulty,
+            'max_shots' => $maxShots,
             'board_size' => 10,
         ], 201);
     }
@@ -75,6 +91,16 @@ class GameController extends Controller
             return response()->json([
                 'message' => 'Ya disparaste a esa celda',
                 'result'  => 'repeated',
+            ], 422);
+        }
+
+        // Comprobar si ya alcanzó el límite de disparos
+        $maxShots = $game->max_shots ?? 60;
+        if ($game->total_shots >= $maxShots) {
+            return response()->json([
+                'message' => "¡Perdiste! Ya alcanzaste el límite de {$maxShots} disparos.",
+                'game_over' => true,
+                'status' => 'lost',
             ], 422);
         }
 
@@ -147,6 +173,7 @@ class GameController extends Controller
             'total_shots'=> $totalShots,
             'hits'       => $hits,
             'shots'      => $shots,
+            'max_shots'  => $maxShots,
             'game_over'  => $allSunk,
             'status'     => $gameStatus,
             'points'     => $points,
@@ -198,6 +225,8 @@ class GameController extends Controller
             'active_game' => true,
             'game_id'     => $game->id,
             'total_shots' => $game->total_shots,
+            'max_shots'   => $game->max_shots ?? 60,
+            'difficulty'  => $game->difficulty ?? 'classic',
             'hits'        => $game->hits,
             'shots'       => $game->shots,
             'status'      => $game->status,

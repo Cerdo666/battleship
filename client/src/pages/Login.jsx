@@ -2,9 +2,11 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { login } from '../services/api';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function Login() {
   const navigate = useNavigate();
+  const { colors } = useTheme();
   const [form, setForm] = useState({ nickname: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -32,7 +34,7 @@ export default function Login() {
   return (
     <div className="row justify-content-center">
       <div className="col-md-5">
-        <div className="card shadow-sm">
+        <div className="card shadow-sm" style={{ backgroundColor: colors.card, color: colors.text, borderColor: colors.border }}>
           <div className="card-body p-4">
             <h3 className="card-title mb-4 text-center">Iniciar sesión</h3>
 
@@ -49,6 +51,7 @@ export default function Login() {
                   name="nickname"
                   value={form.nickname}
                   onChange={handleChange}
+                  style={{ backgroundColor: colors.bg, color: colors.text, borderColor: colors.border }}
                   required
                   autoFocus
                 />
@@ -62,13 +65,15 @@ export default function Login() {
                   name="password"
                   value={form.password}
                   onChange={handleChange}
+                  style={{ backgroundColor: colors.bg, color: colors.text, borderColor: colors.border }}
                   required
                 />
               </div>
 
               <button
                 type="submit"
-                className="btn btn-primary w-100"
+                className="btn w-100"
+                style={{ backgroundColor: colors.primary, color: '#fff', border: 'none' }}
                 disabled={loading}
               >
                 {loading ? 'Entrando...' : 'Iniciar sesión'}
@@ -76,7 +81,7 @@ export default function Login() {
             </form>
 
             <p className="text-center mt-3 mb-0">
-              ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
+              ¿No tienes cuenta? <Link to="/register" style={{ color: colors.primary }}>Regístrate</Link>
             </p>
           </div>
         </div>
