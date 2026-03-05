@@ -19,15 +19,10 @@ class GameController extends Controller
         ]);
 
         $user = $request->user();
-
-        // Si ya tiene una partida activa, no puede iniciar otra
-        $existing = $user->games()->where('status', 'active')->first();
-        if ($existing) {
-            return response()->json([
-                'message' => 'Ya tienes una partida en curso',
-                'game_id' => $existing->id,
-            ], 409);
-        }
+        
+        // DEBUG: Log received difficulty
+        $receivedDifficulty = $request->input('difficulty');
+        \Log::info('GameController@start - Received difficulty: ' . ($receivedDifficulty ?? 'NULL (will use default: classic)'));
 
         // Determine difficulty and max_shots
         $difficulty = $request->input('difficulty', 'classic');
@@ -36,6 +31,25 @@ class GameController extends Controller
             'tactical' => 30,
             default => 60, // classic
         };
+
+        // Si ya tiene una partida activa EN OTRA DIFICULTAD, abandonarla y resetear el nivel
+        $existing = $user->games()->where('status', 'active')->first();
+        if ($existing) {
+            // Si es la misma dificultad, no permitir nueva partida
+            if ($existing->difficulty === $difficulty) {
+                return response()->json([
+                    'message' => 'Ya tienes una partida en curso en esta dificultad',
+                    'game_id' => $existing->id,
+                ], 409);
+            }
+            
+            // Si es diferente dificultad: abandonar partida anterior y resetear nivel
+            $existing->update(['status' => 'abandoned']);
+            
+            // Resetear el nivel para la nueva dificultad
+            $levelColumn = "level_$difficulty";
+            $user->update([$levelColumn => 1]);
+        }
 
         // Generar barcos aleatoriamente en el tablero 10x10
         $ships = $this->generateShips();
@@ -153,6 +167,10 @@ class GameController extends Controller
             // Actualizar estadísticas del usuario
             $user->increment('total_games');
             $user->increment('total_points', $points);
+            
+            // Incrementar nivel para esta dificultad
+            $levelColumn = "level_{$game->difficulty}";
+            $user->increment($levelColumn);
         }
 
         // Guardar estado actualizado

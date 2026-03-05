@@ -15,6 +15,9 @@ class User extends Authenticatable
         'password',
         'total_points',
         'total_games',
+        'level_easy',
+        'level_classic',
+        'level_tactical',
     ];
 
     protected $hidden = [

@@ -15,7 +15,9 @@ class Game extends Model
         'shots',
         'hits',
         'status',
+        'difficulty',
         'total_shots',
+        'max_shots',
         'points',
     ];
 
